@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:WillHabb"
+             x:Class="WillHabb.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="0,0"
+            Spacing="5">
+
+
+            <ListView ItemsSource="{Binding Artikli}"
+          HasUnevenRows="True"
+          SeparatorVisibility="Default">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:Food">
+                        <ViewCell>
+                            <Border Margin="5"
+                       Padding="10"
+
+                                    
+                       BackgroundColor="#59FFFFFF">
+
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
+                                    <!-- Лева страна - слика -->
+                                    <Image Grid.RowSpan="2"
+                               Source="{Binding Slika}"
+                               Aspect="AspectFill"
+                               WidthRequest="120"
+                               HeightRequest="120" />
+
+                                    <!-- Десна страна - вертикални стек са подацима -->
+                                    <StackLayout Grid.Column="1" Spacing="4">
+                                        <!-- Наслов -->
+                                        <Label Text="{Binding Naslov}" 
+                                               FontAttributes="Bold" 
+                                               FontSize="16"
+                                               LineBreakMode="WordWrap"/>
+
+
+                                        <!-- Основне информације -->
+                                        <Label Text="{Binding Cijena}" FontAttributes="Italic" FontSize="16" TextColor="#FAFF00"/>
+                                        <Label Text="{Binding Godina}" FontSize="14" TextColor="#333"/>
+                                        <Label Text="{Binding Kilometraza}" FontSize="14" TextColor="#333"/>
+                                        <Label Text="{Binding Snaga}" FontSize="14" TextColor="#333"/>
+                                        <Label Text="{Binding Lokacija}" FontSize="14" TextColor="#333"/>
+                                        <Label Text="{Binding Privatno}" FontSize="14" TextColor="#333"/>
+
+                                        <!-- Dugmad -->
+                                        <StackLayout Orientation="Horizontal" Spacing="0" Margin="0,0,0,0">
+                                            <Button Text="Pozovi" BackgroundColor="#2a7cff" TextColor="White" HorizontalOptions="Fill"/>
+
+                                            <Button Text="Pošalji poruku" BackgroundColor="#00a859" TextColor="White" HorizontalOptions="Fill" Clicked="Button_Clicked"/>
+                                        </StackLayout>
+                                        <Button Text="Otvori u WillHaben" Clicked="OtvoriWillHaben" CommandParameter="{Binding Url}"/>
+                                    </StackLayout>
+
+                                </Grid>
+                            </Border>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
