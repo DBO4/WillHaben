@@ -1,9 +1,9 @@
 {
   "name": "wilhabenscraper",
   "version": "1.0.0",
-  "main": "index2.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon index2.js"
+    "start": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",

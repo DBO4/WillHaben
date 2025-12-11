@@ -1,38 +1,14 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const { tel } = require('./Oglas.js');
 
 const app = express();
 
 const url = "https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse";
 
-// Extract phone from an ad
-async function getPhoneFromAd(page, url) {
-  try {
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 45000 });
+    let auti = [];
 
-    await page.waitForSelector(
-      '[data-testid="top-contact-box-phone-number-button"]',
-      { visible: true, timeout: 1500 }
-    );
 
-    await page.click(
-      '[data-testid="top-contact-box-phone-number-button"]'
-    );
-
-    await page.waitForTimeout(200);
-
-    const phone = await page.evaluate(() => {
-      const el = document.querySelector(
-        '[data-testid="top-contact-box-phone-number-button"]'
-      );
-      return el ? el.innerText.trim() : null;
-    });
-
-    return phone;
-  } catch (err) {
-    return null;
-  }
-}
 
 (async () => {
     try {
@@ -65,15 +41,30 @@ async function getPhoneFromAd(page, url) {
             });
         }
 
+        
+
         // Скролуј до дна да учита све ауте
         await autoScroll(page);
 
         // Извуци све резултате
         const results = await page.evaluate(() => {
-    const cars = [];
+
+          const cars = []
+
+        
+
 
     document.querySelectorAll('[id^="search-result-entry-header-"]').forEach(parent => {
-        let naslov;
+      
+      const privatno = parent.querySelector('[data-testid*="search-result-entry-seller-information-"]')?.innerText.trim() || null;
+
+      if (privatno == "Privat") {
+        
+        
+        
+      let naslov,telefon,prodavac;
+        //const ogl = oglas;
+
         const title = parent.querySelector("h3")?.innerText.trim() || null;
         const podnaslov = parent.querySelector('span[data-testid*="subheader"]')?.innerText.trim() || null;
         naslov = title + " " + podnaslov;
@@ -105,9 +96,14 @@ async function getPhoneFromAd(page, url) {
 
          const lokacija = parent.querySelector('[data-testid*="location-"]')?.innerText.trim() || null;
 
-         const privatno = parent.querySelector('[data-testid*="search-result-entry-seller-information-"]')?.innerText.trim() || null;
+         
 
          const cijena = parent.querySelector('[data-testid*="price"]')?.innerText.trim() || null;
+        
+
+ 
+
+          auti = cars;
 
         cars.push({
             naslov,
@@ -117,23 +113,44 @@ async function getPhoneFromAd(page, url) {
             kilometraza,
             snaga,
             lokacija,
-            privatno,
-            cijena
+            cijena,
+            telefon,
+            prodavac
         });
+
+      
+        
+      }
     });
 
     return cars;
 });
 
 
- const phonePage = await browser.newPage();
 
-  for (let i = 0; i < cars.length; i++) {
-    console.log(`(${i + 1}/${cars.length}) Telefon za ${cars[i].url}`);
+  let  uk = results.length;
 
-    cars[i].telefon = await getPhoneFromAd(phonePage, cars[i].url);
-  }
+for (let i = 0; i < uk; i++) {
 
+    let info = await tel(results[i].url);
+
+
+
+
+    if (info.telefon == null && info.prodavac == null) {
+        // nema broja — upiši null i nastavi
+        results[i].telefon = null;
+        results[i].prodavac = null;
+        continue;
+    }
+
+    if (info.telefon != null) {
+        results[i].telefon = info.telefon;
+    } else {
+        results[i].prodavac = info.prodavac;
+
+    }
+}
 
 
         console.log("Укупно пронађено:", results.length);
